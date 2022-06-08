@@ -1,6 +1,6 @@
 #!/bin/bash
 #Look Library is an app to save and restore the look of MX-Linux Fluxbox
-#V0.01 by Melber June 2022 220608
+#V0.0.1 by Melber 8 June 2022
 
 #License: GPL-3.0+
 #mxcr-icon based on yad icon from papirus icon set
@@ -12,8 +12,8 @@
 #define some variables
 
 TITLE="MXFB-Look-Library"
-CLASS="mxlook"
-MXLKPATH="$HOME/.config/mxlook"
+CLASS="mxfblook"
+MXLKPATH="$HOME/.config/mxfb-look"
 ICONPATH="/usr/share/pixmaps/mxcr-icon.png"
 #HELPPATH="/usr/share/pixmaps/mxrr-help.png"
 
@@ -21,7 +21,7 @@ ICONPATH="/usr/share/pixmaps/mxcr-icon.png"
 #delete stylelist and tempclr after use
 #trap "rm -r "$MXLKPATH/tempdir" " EXIT
 
-#
+#create path
 if [ ! -d $MXLKPATH ]; then
 
 mkdir $MXLKPATH
@@ -47,17 +47,17 @@ fi
 
 #make Default look file
 
-if [ ! -f $MXLKPATH/looks/MXFB-default_.look ]; then
+if [ ! -f $MXLKPATH/looks/MXFB-default.look ]; then
 
-printf "gtk-theme-name=mx-comfort\ngtk-icon-theme-name=Papirus-mxblue-darkpanes\ngtk-theme-name=\"mx-comfort\"\ngtk-icon-theme-name=\"Papirus-mxblue-darkpanes\"\nsession.styleFile: ~/.fluxbox/styles/MX-comfort\n$HOME/.config/tint2/tint2rc\n@import \"/usr/share/rofi/themes/glue_pro_blue.rasi\"\nfile=/usr/share/backgrounds/Honesty.jpg" > $MXLKPATH/looks/MXFB-default_.look
+printf "gtk-theme-name=mx-comfort\ngtk-icon-theme-name=Papirus-mxblue-darkpanes\ngtk-theme-name=\"mx-comfort\"\ngtk-icon-theme-name=\"Papirus-mxblue-darkpanes\"\nsession.styleFile: ~/.fluxbox/styles/MX-comfort\n$HOME/.config/tint2/tint2rc\n@import \"/usr/share/rofi/themes/glue_pro_blue.rasi\"\nfile=/usr/share/backgrounds/Honesty.jpg" > $MXLKPATH/looks/MXFB-default.look
 
 fi
 
 #make Test look file
 
-if [ ! -f $MXLKPATH/looks/test_.look ]; then
+if [ ! -f $MXLKPATH/looks/test.look ]; then
 
-printf "gtk-theme-name=Numix\ngtk-icon-theme-name=Numix\ngtk-theme-name=\"Numix\"\ngtk-icon-theme-name=\"Numix\"\nsession.styleFile: ~/.fluxbox/styles/MX-Nyz\n$HOME/.config/tint2/grayblue-tint2rc\n@import \"/usr/share/rofi/themes/c64.rasi\"\nfile=/usr/share/backgrounds/Ceiling.jpg" > $MXLKPATH/looks/test_.look
+printf "gtk-theme-name=Numix\ngtk-icon-theme-name=Numix\ngtk-theme-name=\"Numix\"\ngtk-icon-theme-name=\"Numix\"\nsession.styleFile: /usr/share/fluxbox/styles/debian-blue\n$HOME/.config/tint2/grayblue-tint2rc\n@import \"/usr/share/rofi/themes/Indego.rasi\"\nfile=/usr/share/backgrounds/MX_KXF_Blues.jpg" > $MXLKPATH/looks/test.look
 
 fi
 
@@ -69,45 +69,35 @@ save_look() {
 #define some variables
 
 TITLE="MXFB-Look-Library"
-CLASS="mxlook"
-MXLKPATH="$HOME/.config/mxlook"
+CLASS="mxfblook"
+MXLKPATH="$HOME/.config/mxfb-look"
 ICONPATH="/usr/share/pixmaps/mxcr-icon.png"
 
 #read current look components
 
-#theme and icons
-	
+#theme and icons	
 LKTHEME="$(grep "gtk-theme-name" $HOME/.config/gtk-3.0/settings.ini)"
-
 LKICON="$(grep "gtk-icon-theme-name" $HOME/.config/gtk-3.0/settings.ini)"
-
 LKTHEME2="$(grep "gtk-theme-name" $HOME/.gtkrc-2.0)"
-
 LKICON2="$(grep "gtk-icon-theme-name" $HOME/.gtkrc-2.0)"
 
 
 #fluxbox style
-
 LKFLUXSTYLE="$(grep "styles" $HOME/.fluxbox/init)"
 
-
 #tint2
-
 LKTINT="$(grep "tint2" $HOME/.config/tint2/tint2-sessionfile)"
 
-
 #rofi
-
 LKROFI="$(grep "themes" $HOME/.config/rofi/config.rasi)"
 
-
 #background
-
 LKBACK="$(grep "file=" $HOME/.config/nitrogen/bg-saved.cfg)"
 
 
 #make temp file
 echo ""$LKTHEME" "$LKICON" "$LKTHEME2" "$LKICON2" "$LKFLUXSTYLE" "$LKTINT" "$LKROFI" "$LKBACK"" > $MXLKPATH/tempdir/looktmp.txt
+
 
 #amend temp
 cd $MXLKPATH/tempdir
@@ -117,10 +107,7 @@ sed -i "s/gtk-icon-theme-name\=/ /g" looktmp.txt
 sed -i "s/session\.styleFile\:/ /g" looktmp.txt
 sed -i "s/\@import/ /g" looktmp.txt
 sed -i "s/file\=/ /g" looktmp.txt
-#sed -i "s/\.tint2rc/ /g" looktmp.txt
-#sed -i "s/\.rasi\"/ /g" looktmp.txt
 sed -i "s/\"/ /g" looktmp.txt
-#sed -i "s/\.jpg/ /g" looktmp.txt
 
 
 #read temp
@@ -137,15 +124,14 @@ LKBG="${YADFILL[7]}"
 
 #MAIN
 
-MAIN=(yad --title="$TITLE" --class="$CLASS" --window-icon="$ICONPATH" --borders=20 --center --width=600 --height=400 --fixed --form --columns=1 --align=left --separator="_" --button="gtk-quit":1 --button="Save Look":0 \
---text="
-<b>Current Settings.\n</b>
-GTK Theme:		<b>"$LKTH"</b>\n
-Gtk Icons:		<b>"$LKIC"</b>\n
-Fluxbox Style:	<b>"$LKFS"</b>\n
-Tint2:			<b>"$LKTI"</b>\n
-Rofi:			<b>"$LKRO"</b>\n
-Wallpaper:		<b>"$LKBG"</b>\n"
+MAIN=(yad --title="$TITLE" --class="$CLASS" --window-icon="$ICONPATH" --borders=20 --center --width=600 --height=400 --fixed --form --columns=1 --align=left --separator="" --button="gtk-quit":1 --button="Save Look":0 \
+--text="\n<b>Current Settings.\n\n</b>
+GTK Theme: <b>"$LKTH"</b>\n
+Gtk Icons: <b>"$LKIC"</b>\n
+Fluxbox Style: <b>"$LKFS"</b>\n
+Tint2: <b>"$LKTI"</b>\n
+Rofi: <b>"$LKRO"</b>\n
+Wallpaper: <b>"$LKBG"</b>\n"
 --field="Save Look as" "New-Look-Name"\
 )
 NEWNAME=$("${MAIN[@]}")
@@ -222,21 +208,21 @@ exit
 
 
 
-###################
+############################################################
 #function restore look
 
 restore_look() {
 #define some variables
 
 TITLE="MXFB-Look-Library"
-CLASS="mxlook"
-MXLKPATH="$HOME/.config/mxlook"
+CLASS="mxfblook"
+MXLKPATH="$HOME/.config/mxfb-look"
 ICONPATH="/usr/share/pixmaps/mxcr-icon.png"
 
 
 #read saved looks
 cd $MXLKPATH/looks
-ls -f *_.look > $MXLKPATH/tempdir/looklist.txt
+ls -f *.look > $MXLKPATH/tempdir/looklist.txt
 
 
 #select look to restore
@@ -304,17 +290,43 @@ LKFSOLD=$(echo "${LKFSOLD}" | sed -e 's/[]$\/*[\^]/\\&/g' )
 LKROFIOLD=$(echo "${LKROFIOLD}" | sed -e 's/[]$\/*[\^]/\\&/g' )
 LKBACKOLD=$(echo "${LKBACKOLD}" | sed -e 's/[]$\/*[\^]/\\&/g' )
 
+
+#make temp file
+echo ""$LKTHEMENEW" "$LKICONNEW" "$LKTHEMENEW2" "$LKICONNEW2" "$LKFSNEW" "$LKTINTNEW" "$LKROFINEW" "$LKBACKNEW"" > $MXLKPATH/tempdir/looktmp-new.txt
+
+#amend temp
+cd $MXLKPATH/tempdir
+
+sed -i "s/gtk-theme-name\=/ /g" looktmp-new.txt
+sed -i "s/gtk-icon-theme-name\=/ /g" looktmp-new.txt
+sed -i "s/session\.styleFile\:/ /g" looktmp-new.txt
+sed -i "s/\@import/ /g" looktmp-new.txt
+sed -i "s/file\=/ /g" looktmp-new.txt
+sed -i "s/\"/ /g" looktmp-new.txt
+
+
+#read temp
+
+read -r -a NEWFILL < looktmp-new.txt
+
+NLKTH="${NEWFILL[0]}"
+NLKIC="${NEWFILL[1]}"
+NLKFS="${NEWFILL[4]}"
+NLKTI="${NEWFILL[5]}"
+NLKRO="${NEWFILL[6]}"
+NLKBG="${NEWFILL[7]}"
+
+
 #RESTOREMAIN
 
 yad --title="$TITLE" --class="$CLASS" --window-icon="$ICONPATH" --borders=20 --center --width=600 --height=400 --fixed --button="gtk-quit":1 --button="Restore Look":0 \
---text="
-<b>These settings will be restored.\n</b>
-GTK Theme: <b>"$LKTHEMENEW"</b>\n
-Gtk Icons: <b>"$LKICONNEW"</b>\n
-Fluxbox Style: <b>"LKFSNEW"</b>\n
-Tint2: <b>"$LKTINTNEW"</b>\n
-Rofi: <b>"$LKROFINEW"</b>\n
-Wallpaper: <b>"$LKBACKNEW"</b>\n"\
+--text="\n<b>These settings will be restored.\n\n</b>
+GTK Theme: <b>"$NLKTH"</b>\n
+Gtk Icons: <b>"$NLKIC"</b>\n
+Fluxbox Style: <b>"$NLKFS"</b>\n
+Tint2: <b>"$NLKTI"</b>\n
+Rofi: <b>"$NLKRO"</b>\n
+Wallpaper: <b>"$NLKBG"</b>\n"\
 
 
 GETOUT=$(echo "$?")
