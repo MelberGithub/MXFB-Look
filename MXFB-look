@@ -92,7 +92,7 @@ LKTINT="$(grep "tint2" $HOME/.config/tint2/tint2-sessionfile)"
 LKROFI="$(grep "themes" $HOME/.config/rofi/config.rasi)"
 
 #background
-LKBACK="$(grep "file=" $HOME/.config/nitrogen/bg-saved.cfg)"
+LKBACK="$(grep "file=" $HOME/.config/nitrogen/bg-saved.cfg | sed -n 2p)"
 
 
 #make temp file
@@ -190,8 +190,6 @@ case $? in
 esac
 done
 
-##################################
-
 echo ""$LKTHEME"
 "$LKICON"
 "$LKTHEME2"
@@ -207,8 +205,7 @@ exit
 }
 
 
-
-############################################################
+#################################
 #function restore look
 
 restore_look() {
