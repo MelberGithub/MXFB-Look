@@ -94,6 +94,10 @@ LKROFI="$(grep "themes" $HOME/.config/rofi/config.rasi)"
 #background
 LKBACK="$(grep "file=" $HOME/.config/nitrogen/bg-saved.cfg | sed -n 2p)"
 
+if [ "$LKBACK" = "" ]; then
+LKBACK="$(grep "file=" $HOME/.config/nitrogen/bg-saved.cfg)"
+fi
+
 
 #make temp file
 echo ""$LKTHEME" "$LKICON" "$LKTHEME2" "$LKICON2" "$LKFLUXSTYLE" "$LKTINT" "$LKROFI" "$LKBACK"" > $MXLKPATH/tempdir/looktmp.txt
