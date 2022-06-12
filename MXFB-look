@@ -1,13 +1,10 @@
 #!/bin/bash
 #Look Library is an app to save and restore the look of MX-Linux Fluxbox
-#V.0.0.1 by Melber 9 June 2022
-
+#V.0.0.2 by Melber 12 June 2022
 #License: GPL-3.0+
 #mxcr-icon based on yad icon from papirus icon set
-
-#paths
-#theme and icons ~/.config/gtk-3.0/settings.ini
-
+#Changelog
+#added multiple tint2 panels
 
 #define some variables
 
@@ -49,7 +46,7 @@ fi
 
 if [ ! -f $MXLKPATH/looks/MXFB-default.look ]; then
 
-printf "gtk-theme-name=mx-comfort\ngtk-icon-theme-name=Papirus-mxblue-darkpanes\ngtk-theme-name=\"mx-comfort\"\ngtk-icon-theme-name=\"Papirus-mxblue-darkpanes\"\nsession.styleFile: ~/.fluxbox/styles/MX-comfort\n$HOME/.config/tint2/tint2rc\n@import \"/usr/share/rofi/themes/glue_pro_blue.rasi\"\nfile=/usr/share/backgrounds/Honesty.jpg" > $MXLKPATH/looks/MXFB-default.look
+printf "gtk-theme-name=mx-comfort\ngtk-icon-theme-name=Papirus-mxblue-darkpanes\ngtk-theme-name=\"mx-comfort\"\ngtk-icon-theme-name=\"Papirus-mxblue-darkpanes\"\nsession.styleFile: ~/.fluxbox/styles/MX-comfort\n1\n$HOME/.config/tint2/tint2rc\n \n@import \"/usr/share/rofi/themes/glue_pro_blue.rasi\"\nfile=/usr/share/backgrounds/Honesty.jpg" > $MXLKPATH/looks/MXFB-default.look
 
 fi
 
@@ -57,7 +54,7 @@ fi
 
 if [ ! -f $MXLKPATH/looks/test.look ]; then
 
-printf "gtk-theme-name=Numix\ngtk-icon-theme-name=Numix\ngtk-theme-name=\"Numix\"\ngtk-icon-theme-name=\"Numix\"\nsession.styleFile: /usr/share/fluxbox/styles/debian-blue\n$HOME/.config/tint2/grayblue-tint2rc\n@import \"/usr/share/rofi/themes/Indego.rasi\"\nfile=/usr/share/backgrounds/MX_KXF_Blues.jpg" > $MXLKPATH/looks/test.look
+printf "gtk-theme-name=Numix\ngtk-icon-theme-name=Numix\ngtk-theme-name=\"Numix\"\ngtk-icon-theme-name=\"Numix\"\nsession.styleFile: /usr/share/fluxbox/styles/debian-blue\n1\n$HOME/.config/tint2/grayblue-tint2rc\n \n@import \"/usr/share/rofi/themes/Indego.rasi\"\nfile=/usr/share/backgrounds/MX_KXF_Blues.jpg" > $MXLKPATH/looks/test.look
 
 fi
 
@@ -75,7 +72,7 @@ ICONPATH="/usr/share/pixmaps/mxcr-icon.png"
 
 #read current look components
 
-#theme and icons	
+#theme and icons
 LKTHEME="$(grep "gtk-theme-name" $HOME/.config/gtk-3.0/settings.ini)"
 LKICON="$(grep "gtk-icon-theme-name" $HOME/.config/gtk-3.0/settings.ini)"
 LKTHEME2="$(grep "gtk-theme-name" $HOME/.gtkrc-2.0)"
@@ -86,7 +83,9 @@ LKICON2="$(grep "gtk-icon-theme-name" $HOME/.gtkrc-2.0)"
 LKFLUXSTYLE="$(grep "styles" $HOME/.fluxbox/init)"
 
 #tint2
-LKTINT="$(grep "tint2" $HOME/.config/tint2/tint2-sessionfile)"
+TINTNUM="$(wc -l < $HOME/.config/tint2/tint2-sessionfile)"
+LKTINT1="$(grep "tint2" $HOME/.config/tint2/tint2-sessionfile | sed -n 1p)"
+LKTINT2="$(grep "tint2" $HOME/.config/tint2/tint2-sessionfile | sed -n 2p)"
 
 #rofi
 LKROFI="$(grep "themes" $HOME/.config/rofi/config.rasi)"
@@ -100,7 +99,7 @@ fi
 
 
 #make temp file
-echo ""$LKTHEME" "$LKICON" "$LKTHEME2" "$LKICON2" "$LKFLUXSTYLE" "$LKTINT" "$LKROFI" "$LKBACK"" > $MXLKPATH/tempdir/looktmp.txt
+echo ""$LKTHEME" "$LKICON" "$LKTHEME2" "$LKICON2" "$LKFLUXSTYLE" "$TINTNUM" "$LKTINT1" "$LKTINT2" "$LKROFI" "$LKBACK"" > $MXLKPATH/tempdir/looktmp.txt
 
 
 #amend temp
@@ -109,6 +108,7 @@ cd $MXLKPATH/tempdir
 sed -i "s/gtk-theme-name\=/ /g" looktmp.txt
 sed -i "s/gtk-icon-theme-name\=/ /g" looktmp.txt
 sed -i "s/session\.styleFile\:/ /g" looktmp.txt
+sed -i "s/\$HOME\/\.config\/tint2\// /g" looktmp.txt
 sed -i "s/\@import/ /g" looktmp.txt
 sed -i "s/file\=/ /g" looktmp.txt
 sed -i "s/\"/ /g" looktmp.txt
@@ -121,19 +121,20 @@ read -r -a YADFILL < looktmp.txt
 LKTH="${YADFILL[0]}"
 LKIC="${YADFILL[1]}"
 LKFS="${YADFILL[4]}"
-LKTI="${YADFILL[5]}"
-LKRO="${YADFILL[6]}"
-LKBG="${YADFILL[7]}"
+LKTI1="${YADFILL[6]}"
+LKTI2="${YADFILL[7]}"
+LKRO="${YADFILL[8]}"
+LKBG="${YADFILL[9]}"
 
 
 #MAIN
 
 MAIN=(yad --title="$TITLE" --class="$CLASS" --window-icon="$ICONPATH" --borders=20 --center --width=600 --height=400 --fixed --form --columns=1 --align=left --separator="" --button="gtk-quit":1 --button="Save Look":0 \
---text="\n<b>Current Settings.\n\n</b>
+--text="\n<b>Current Settings.\n</b>\n
 GTK Theme: <b>"$LKTH"</b>\n
 Gtk Icons: <b>"$LKIC"</b>\n
 Fluxbox Style: <b>"$LKFS"</b>\n
-Tint2: <b>"$LKTI"</b>\n
+Tint2 Panel: <b>"$LKTI1" "$LKTI2"</b>\n
 Rofi: <b>"$LKRO"</b>\n
 Wallpaper: <b>"$LKBG"</b>\n"
 --field="Save Look as" "New-Look-Name"\
@@ -194,12 +195,16 @@ case $? in
 esac
 done
 
+##################################
+
 echo ""$LKTHEME"
 "$LKICON"
 "$LKTHEME2"
 "$LKICON2"
 session.styleFile: "$LKFS"
-"$LKTINT"
+"$TINTNUM"
+"$LKTINT1"
+"$LKTINT2"
 @import \""$LKRO"\"
 "$LKBACK"" > $MXLKPATH/looks/"$NEWNAME".look
 
@@ -209,7 +214,8 @@ exit
 }
 
 
-#################################
+
+############################################################
 #function restore look
 
 restore_look() {
@@ -249,9 +255,11 @@ LKICONNEW="${LKRE[1]}"
 LKTHEMENEW2="${LKRE[2]}"
 LKICONNEW2="${LKRE[3]}"
 LKFSNEW="${LKRE[4]}"
-LKTINTNEW="${LKRE[5]}"
-LKROFINEW="${LKRE[6]}"
-LKBACKNEW="${LKRE[7]}"
+TINTNUMNEW="${LKRE[5]}"
+LKTINT1NEW="${LKRE[6]}"
+LKTINT2NEW="${LKRE[7]}"
+LKROFINEW="${LKRE[8]}"
+LKBACKNEW="${LKRE[9]}"
 
 LKTHEMENEW=$(echo "${LKTHEMENEW}" | sed -e 's/[]$.*[\^]/\\&/g' )
 LKICONNEW=$(echo "${LKICONNEW}" | sed -e 's/[]$.*[\^]/\\&/g' )
@@ -264,7 +272,7 @@ LKBACKNEW=$(echo "${LKBACKNEW}" | sed -e 's/[]$\/*[\^]/\\&/g' )
 
 #read current look components
 
-#theme and icons	
+#theme and icons
 LKTHEMEOLD="$(grep "gtk-theme-name" $HOME/.config/gtk-3.0/settings.ini)"
 LKICONOLD="$(grep "gtk-icon-theme-name" $HOME/.config/gtk-3.0/settings.ini)"
 LKTHEMEOLD2="$(grep "gtk-theme-name" $HOME/.gtkrc-2.0)"
@@ -274,7 +282,8 @@ LKICONOLD2="$(grep "gtk-icon-theme-name" $HOME/.gtkrc-2.0)"
 LKFSOLD="$(grep "styles" $HOME/.fluxbox/init)"
 
 #tint2
-LKTINTOLD="$(grep "tint2" $HOME/.config/tint2/tint2-sessionfile)"
+LKTINT1OLD="$(grep "tint2" $HOME/.config/tint2/tint2-sessionfile | sed -n 1p)"
+LKTINT2OLD="$(grep "tint2" $HOME/.config/tint2/tint2-sessionfile | sed -n 2p)"
 
 #rofi
 LKROFIOLD="$(grep "themes" $HOME/.config/rofi/config.rasi)"
@@ -293,7 +302,7 @@ LKBACKOLD=$(echo "${LKBACKOLD}" | sed -e 's/[]$\/*[\^]/\\&/g' )
 
 
 #make temp file
-echo ""$LKTHEMENEW" "$LKICONNEW" "$LKTHEMENEW2" "$LKICONNEW2" "$LKFSNEW" "$LKTINTNEW" "$LKROFINEW" "$LKBACKNEW"" > $MXLKPATH/tempdir/looktmp-new.txt
+echo ""$LKTHEMENEW" "$LKICONNEW" "$LKTHEMENEW2" "$LKICONNEW2" "$LKFSNEW" "TINTNUMNEW" "$LKTINT1NEW" "$LKTINT2NEW" "$LKROFINEW" "$LKBACKNEW"" > $MXLKPATH/tempdir/looktmp-new.txt
 
 #amend temp
 cd $MXLKPATH/tempdir
@@ -313,19 +322,21 @@ read -r -a NEWFILL < looktmp-new.txt
 NLKTH="${NEWFILL[0]}"
 NLKIC="${NEWFILL[1]}"
 NLKFS="${NEWFILL[4]}"
-NLKTI="${NEWFILL[5]}"
-NLKRO="${NEWFILL[6]}"
-NLKBG="${NEWFILL[7]}"
+NTINU="${NEWFILL[5]}"
+NLKTI1="${NEWFILL[6]}"
+NLKTI2="${NEWFILL[7]}"
+NLKRO="${NEWFILL[8]}"
+NLKBG="${NEWFILL[9]}"
 
 
 #RESTOREMAIN
 
 yad --title="$TITLE" --class="$CLASS" --window-icon="$ICONPATH" --borders=20 --center --width=600 --height=400 --fixed --button="gtk-quit":1 --button="Restore Look":0 \
---text="\n<b>These settings will be restored.\n\n</b>
+--text="\n<b>These settings will be restored.\n</b>\n
 GTK Theme: <b>"$NLKTH"</b>\n
 Gtk Icons: <b>"$NLKIC"</b>\n
 Fluxbox Style: <b>"$NLKFS"</b>\n
-Tint2: <b>"$NLKTI"</b>\n
+Tint2: <b>"$NLKTI1" "$NLKTI2"</b>\n
 Rofi: <b>"$NLKRO"</b>\n
 Wallpaper: <b>"$NLKBG"</b>\n"\
 
@@ -368,11 +379,29 @@ fluxbox-remote restart
 
 #tint
 cd ~/.config/tint2
+
+if [ $TINTNUMNEW = 2 ]; then
+
 rm tint2-sessionfile
 killall tint2
-LKTINTNEW2=$(basename "$LKTINTNEW")
-echo "$HOME/.config/tint2/$LKTINTNEW2" >> ~/.config/tint2/tint2-sessionfile
-tint2 -c $HOME/.config/tint2/$LKTINTNEW2 >/dev/null 2>&1 &  disown
+LKTINTNEWA=$(basename "$LKTINT1NEW")
+LKTINTNEWB=$(basename "$LKTINT2NEW")
+printf "$HOME/.config/tint2/$LKTINTNEWA\n$HOME/.config/tint2/$LKTINTNEWB" >> ~/.config/tint2/tint2-sessionfile
+echo "$LKTINTNEWA"
+echo "$LKTINTNEWB"
+
+tint2 -c $HOME/.config/tint2/$LKTINTNEWA >/dev/null 2>&1 &  disown
+tint2 -c $HOME/.config/tint2/$LKTINTNEWB >/dev/null 2>&1 &  disown
+
+else
+
+rm tint2-sessionfile
+killall tint2
+LKTINTNEWA=$(basename "$LKTINT1NEW")
+echo "$HOME/.config/tint2/$LKTINTNEWA" >> ~/.config/tint2/tint2-sessionfile
+tint2 -c $HOME/.config/tint2/$LKTINTNEWA >/dev/null 2>&1 &  disown
+
+fi
 
 
 #rofi
@@ -394,5 +423,4 @@ fi
 
 export -f save_look restore_look
 
-yad --title="$TITLE" --class="$CLASS" --window-icon="$ICONPATH" --width=400 --height=200 --fixed --center --borders=20 \
---text="<b>You can save the current look or restore a saved look</b>\n\nA look is comprised of the following elements\n- Gtk-Theme\n- Gtk-Icon\n- Fluxbox Style\n- Tint2 Panel\n- Rofi Theme\n- Wallpaper\n\n" --text-align=center --button="gtk-close" --button="Restore Look":"bash -c restore_look" --button="Save Current Look":"bash -c save_look" \
+yad --title="$TITLE" --class="$CLASS" --window-icon="$ICONPATH" --width=400 --height=200 --fixed --center --borders=20 --text-align=center --text="<b>You can save the current look or restore a saved look</b>\n\nA look is comprised of the following elements\n- Gtk-Theme\n- Gtk-Icon\n- Fluxbox Style\n- Tint2 Panel\n- Rofi Theme\n- Wallpaper\n\n" --button="gtk-close" --button="Restore Look":"bash -c restore_look" --button="Save Current Look":"bash -c save_look" \
