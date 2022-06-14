@@ -1,6 +1,6 @@
 #!/bin/bash
 #Look Library is an app to save and restore the look of MX-Linux Fluxbox
-#V.0.0.3 by Melber 14 June 2022
+#V.0.0.4 by Melber 14 June 2022
 #License: GPL-3.0+
 #mxcr-icon based on yad icon from papirus icon set
 #Changelog
@@ -314,7 +314,7 @@ LKBACKOLD=$(echo "${LKBACKOLD}" | sed -e 's/[]$\/*[\^]/\\&/g' )
 
 
 #make temp file
-echo ""$LKTHEMENEW" "$LKICONNEW" "$LKTHEMENEW2" "$LKICONNEW2" "$LKFSNEW" "$INTNUMNEW" "$LKTINT1NEW" "$LKTINT2NEW" "$LKROFINEW" "$LKBACKNEW"" > $MXLKPATH/tempdir/looktmp-new.txt
+echo ""$LKTHEMENEW" "$LKICONNEW" "$LKTHEMENEW2" "$LKICONNEW2" "$LKFSNEW" "$TINTNUMNEW" "$LKTINT1NEW" "$LKTINT2NEW" "$LKROFINEW" "$LKBACKNEW"" > $MXLKPATH/tempdir/looktmp-new.txt
 
 #amend temp
 cd $MXLKPATH/tempdir
