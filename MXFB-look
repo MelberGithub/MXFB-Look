@@ -95,6 +95,10 @@ TINTNUM="$(wc -l < $HOME/.config/tint2/tint2-sessionfile)"
 LKTINT1="$(grep "tint2" $HOME/.config/tint2/tint2-sessionfile | sed -n 1p)"
 LKTINT2="$(grep "tint2" $HOME/.config/tint2/tint2-sessionfile | sed -n 2p)"
 
+if [ $TINTNUM = 1 ]; then
+LKTINT2="x"
+fi
+
 #rofi
 LKROFI="$(grep "themes" $HOME/.config/rofi/config.rasi)"
 
