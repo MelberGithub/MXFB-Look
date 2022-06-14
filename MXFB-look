@@ -1,6 +1,6 @@
 #!/bin/bash
 #Look Library is an app to save and restore the look of MX-Linux Fluxbox
-#V.0.0.2 by Melber 12 June 2022
+#V.0.0.3 by Melber 14 June 2022
 #License: GPL-3.0+
 #mxcr-icon based on yad icon from papirus icon set
 #Changelog
@@ -46,7 +46,7 @@ fi
 
 if [ ! -f $MXLKPATH/looks/MXFB-default.look ]; then
 
-printf "gtk-theme-name=mx-comfort\ngtk-icon-theme-name=Papirus-mxblue-darkpanes\ngtk-theme-name=\"mx-comfort\"\ngtk-icon-theme-name=\"Papirus-mxblue-darkpanes\"\nsession.styleFile: ~/.fluxbox/styles/MX-comfort\n1\n$HOME/.config/tint2/tint2rc\n \n@import \"/usr/share/rofi/themes/glue_pro_blue.rasi\"\nfile=/usr/share/backgrounds/Honesty.jpg" > $MXLKPATH/looks/MXFB-default.look
+printf "gtk-theme-name=mx-comfort\ngtk-icon-theme-name=Papirus-mxblue-darkpanes\ngtk-theme-name=\"mx-comfort\"\ngtk-icon-theme-name=\"Papirus-mxblue-darkpanes\"\nsession.styleFile: ~/.fluxbox/styles/MX-comfort\n1\n$HOME/.config/tint2/tint2rc\nx\n@import \"/usr/share/rofi/themes/glue_pro_blue.rasi\"\nfile=/usr/share/backgrounds/Honesty.jpg" > $MXLKPATH/looks/MXFB-default.look
 
 fi
 
@@ -54,7 +54,15 @@ fi
 
 if [ ! -f $MXLKPATH/looks/test.look ]; then
 
-printf "gtk-theme-name=Numix\ngtk-icon-theme-name=Numix\ngtk-theme-name=\"Numix\"\ngtk-icon-theme-name=\"Numix\"\nsession.styleFile: /usr/share/fluxbox/styles/debian-blue\n1\n$HOME/.config/tint2/grayblue-tint2rc\n \n@import \"/usr/share/rofi/themes/Indego.rasi\"\nfile=/usr/share/backgrounds/MX_KXF_Blues.jpg" > $MXLKPATH/looks/test.look
+printf "gtk-theme-name=Numix\ngtk-icon-theme-name=Numix\ngtk-theme-name=\"Numix\"\ngtk-icon-theme-name=\"Numix\"\nsession.styleFile: /usr/share/fluxbox/styles/debian-blue\n1\n$HOME/.config/tint2/grayblue-tint2rc\nx\n@import \"/usr/share/rofi/themes/Indego.rasi\"\nfile=/usr/share/backgrounds/MX_KXF_Blues.jpg" > $MXLKPATH/looks/test.look
+
+fi
+
+#make Test2 look file
+
+if [ ! -f $MXLKPATH/looks/test2.look ]; then
+
+printf "gtk-theme-name=Matcha-dark-sea\ngtk-icon-theme-name=HighContrast\ngtk-theme-name=\"Matcha-dark-sea\"\ngtk-icon-theme-name=\"HighContrast\"\nsession.styleFile: /usr/share/fluxbox/styles/Shade\n2\n$HOME/.config/tint2/graytop-tint2rc\n$HOME/.config/tint2/traditional-tint2rc\n@import \"/usr/share/rofi/themes/fancy.rasi\"\nfile=/usr/share/backgrounds/Big_Bee.jpg" > $MXLKPATH/looks/test2.look
 
 fi
 
@@ -302,7 +310,7 @@ LKBACKOLD=$(echo "${LKBACKOLD}" | sed -e 's/[]$\/*[\^]/\\&/g' )
 
 
 #make temp file
-echo ""$LKTHEMENEW" "$LKICONNEW" "$LKTHEMENEW2" "$LKICONNEW2" "$LKFSNEW" "TINTNUMNEW" "$LKTINT1NEW" "$LKTINT2NEW" "$LKROFINEW" "$LKBACKNEW"" > $MXLKPATH/tempdir/looktmp-new.txt
+echo ""$LKTHEMENEW" "$LKICONNEW" "$LKTHEMENEW2" "$LKICONNEW2" "$LKFSNEW" "$INTNUMNEW" "$LKTINT1NEW" "$LKTINT2NEW" "$LKROFINEW" "$LKBACKNEW"" > $MXLKPATH/tempdir/looktmp-new.txt
 
 #amend temp
 cd $MXLKPATH/tempdir
@@ -310,6 +318,7 @@ cd $MXLKPATH/tempdir
 sed -i "s/gtk-theme-name\=/ /g" looktmp-new.txt
 sed -i "s/gtk-icon-theme-name\=/ /g" looktmp-new.txt
 sed -i "s/session\.styleFile\:/ /g" looktmp-new.txt
+sed -i "s/\$HOME\/\.config\/tint2\// /g" looktmp-new.txt
 sed -i "s/\@import/ /g" looktmp-new.txt
 sed -i "s/file\=/ /g" looktmp-new.txt
 sed -i "s/\"/ /g" looktmp-new.txt
@@ -328,6 +337,9 @@ NLKTI2="${NEWFILL[7]}"
 NLKRO="${NEWFILL[8]}"
 NLKBG="${NEWFILL[9]}"
 
+if [ $NLKTI2 = x ]; then
+NLKTI2=""
+fi
 
 #RESTOREMAIN
 
