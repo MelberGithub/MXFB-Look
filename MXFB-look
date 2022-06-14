@@ -403,8 +403,6 @@ killall tint2
 LKTINTNEWA=$(basename "$LKTINT1NEW")
 LKTINTNEWB=$(basename "$LKTINT2NEW")
 printf "$HOME/.config/tint2/$LKTINTNEWA\n$HOME/.config/tint2/$LKTINTNEWB" >> ~/.config/tint2/tint2-sessionfile
-echo "$LKTINTNEWA"
-echo "$LKTINTNEWB"
 
 tint2 -c $HOME/.config/tint2/$LKTINTNEWA >/dev/null 2>&1 &  disown
 tint2 -c $HOME/.config/tint2/$LKTINTNEWB >/dev/null 2>&1 &  disown
