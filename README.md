@@ -7,13 +7,15 @@ A look is comprised of the following elements
 - gtk theme
 - gtk icon theme
 - fluxbox style
-- tint2 panel
+- tint2 panel (max. two)
 - rofi
 - wallpaper
+- conky (max. one)
 
 
-Two looks are created by default for testing purposes
+Three looks are created by default for testing purposes
 - MXFB-default
-- Test
+- test
+- test2
 
 You can save further looks...
