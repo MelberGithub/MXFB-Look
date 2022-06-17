@@ -1,10 +1,11 @@
 #!/bin/bash
 #Look Library is an app to save and restore the look of MX-Linux Fluxbox
-#V.0.0.4 by Melber 14 June 2022
+#V.0.0.5 font-conky by Melber 18 June 2022
 #License: GPL-3.0+
 #mxcr-icon based on yad icon from papirus icon set
 #Changelog
-#added multiple tint2 panels
+#added font, conky, preview image
+#fixed accept empty space in gtk names
 
 #define some variables
 
@@ -46,7 +47,7 @@ fi
 
 if [ ! -f $MXLKPATH/looks/MXFB-default.look ]; then
 
-printf "gtk-theme-name=mx-comfort\ngtk-icon-theme-name=Papirus-mxblue-darkpanes\ngtk-theme-name=\"mx-comfort\"\ngtk-icon-theme-name=\"Papirus-mxblue-darkpanes\"\nsession.styleFile: ~/.fluxbox/styles/MX-comfort\n1\n$HOME/.config/tint2/tint2rc\nx\n@import \"/usr/share/rofi/themes/glue_pro_blue.rasi\"\nfile=/usr/share/backgrounds/Honesty.jpg" > $MXLKPATH/looks/MXFB-default.look
+printf "gtk-theme-name=mx-comfort\ngtk-icon-theme-name=Papirus-mxblue-darkpanes\ngtk-font-name=Sans 11\ngtk-theme-name=\"mx-comfort\"\ngtk-icon-theme-name=\"Papirus-mxblue-darkpanes\"\ngtk-font-name=\"Sans 11\"\nsession.styleFile: ~/.fluxbox/styles/MX-comfort\n1\n$\HOME/.config/tint2/tint2rc\nNone\n@import \"/usr/share/rofi/themes/glue_pro_blue.rasi\"\nfile=/usr/share/backgrounds/Honesty.jpg\ncd \"/home/\$USER/.conky/MX-CowonBlue\"\nconky -c \"/home/\$USER/.conky/MX-CowonPink/MX-Cowon_pink_roboto\" &\nHidden=false" > $MXLKPATH/looks/MXFB-default.look
 
 fi
 
@@ -54,7 +55,7 @@ fi
 
 if [ ! -f $MXLKPATH/looks/test.look ]; then
 
-printf "gtk-theme-name=Numix\ngtk-icon-theme-name=Numix\ngtk-theme-name=\"Numix\"\ngtk-icon-theme-name=\"Numix\"\nsession.styleFile: /usr/share/fluxbox/styles/debian-blue\n1\n$HOME/.config/tint2/grayblue-tint2rc\nx\n@import \"/usr/share/rofi/themes/Indego.rasi\"\nfile=/usr/share/backgrounds/MX_KXF_Blues.jpg" > $MXLKPATH/looks/test.look
+printf "gtk-theme-name=Numix\ngtk-icon-theme-name=Numix\ngtk-font-name=Caladea 11\ngtk-theme-name=\"Numix\"\ngtk-icon-theme-name=\"Numix\"\ngtk-font-name=\"Caladea 11\"\nsession.styleFile: /usr/share/fluxbox/styles/debian-blue\n1\n\$HOME/.config/tint2/grayblue-tint2rc\nNone\n@import \"/usr/share/rofi/themes/Indego.rasi\"\nfile=/usr/share/backgrounds/MX_KXF_Blues.jpg\ncd \"/home/\$USER/.conky/MX-antiX\"\nconky -c \"/home/\$USER/.conky/MX-antiX/MX-antiX17\" &\nHidden=false" > $MXLKPATH/looks/test.look
 
 fi
 
@@ -62,7 +63,7 @@ fi
 
 if [ ! -f $MXLKPATH/looks/test2.look ]; then
 
-printf "gtk-theme-name=Matcha-dark-sea\ngtk-icon-theme-name=HighContrast\ngtk-theme-name=\"Matcha-dark-sea\"\ngtk-icon-theme-name=\"HighContrast\"\nsession.styleFile: /usr/share/fluxbox/styles/Shade\n2\n$HOME/.config/tint2/graytop-tint2rc\n$HOME/.config/tint2/traditional-tint2rc\n@import \"/usr/share/rofi/themes/fancy.rasi\"\nfile=/usr/share/backgrounds/Big_Bee.jpg" > $MXLKPATH/looks/test2.look
+printf "gtk-theme-name=Matcha-dark-sea\ngtk-icon-theme-name=HighContrast\ngtk-font-name=Comic Sans MS 11\ngtk-theme-name=\"Matcha-dark-sea\"\ngtk-icon-theme-name=\"HighContrast\"\ngtk-font-name=\"Comic Sans MS 11\"\nsession.styleFile: /usr/share/fluxbox/styles/Shade\n2\n\$HOME/.config/tint2/graytop-tint2rc\n\$HOME/.config/tint2/traditional-tint2rc\n@import \"/usr/share/rofi/themes/fancy.rasi\"\nfile=/usr/share/backgrounds/Big_Bee.jpg\ncd \"/home/\$USER/.conky/MX-Clockrings\"\nconky -c \"/home/\$USER/.conky/MX-Clockrings/conkyrc\" &\nHidden=true" > $MXLKPATH/looks/test2.look
 
 fi
 
@@ -83,9 +84,10 @@ ICONPATH="/usr/share/pixmaps/mxcr-icon.png"
 #theme and icons
 LKTHEME="$(grep "gtk-theme-name" $HOME/.config/gtk-3.0/settings.ini)"
 LKICON="$(grep "gtk-icon-theme-name" $HOME/.config/gtk-3.0/settings.ini)"
+LKFONT="$(grep "gtk-font-name" $HOME/.config/gtk-3.0/settings.ini)"
 LKTHEME2="$(grep "gtk-theme-name" $HOME/.gtkrc-2.0)"
 LKICON2="$(grep "gtk-icon-theme-name" $HOME/.gtkrc-2.0)"
-
+LKFONT2="$(grep "gtk-font-name" $HOME/.gtkrc-2.0)"
 
 #fluxbox style
 LKFLUXSTYLE="$(grep "styles" $HOME/.fluxbox/init)"
@@ -93,10 +95,17 @@ LKFLUXSTYLE="$(grep "styles" $HOME/.fluxbox/init)"
 #tint2
 TINTNUM="$(wc -l < $HOME/.config/tint2/tint2-sessionfile)"
 LKTINT1="$(grep "tint2" $HOME/.config/tint2/tint2-sessionfile | sed -n 1p)"
+LKTINT1=$(echo "${LKTINT1}" | sed -e 's/$HOME/\$HOME/g' )
 LKTINT2="$(grep "tint2" $HOME/.config/tint2/tint2-sessionfile | sed -n 2p)"
+LKTINT2=$(echo "${LKTINT2}" | sed -e 's/$HOME/\$HOME/g' )
+
+if [ $TINTNUM = 0 ]; then
+LKTINT1="None"
+LKTINT2="None"
+fi
 
 if [ $TINTNUM = 1 ]; then
-LKTINT2="x"
+LKTINT2="None"
 fi
 
 #rofi
@@ -109,9 +118,13 @@ if [ "$LKBACK" = "" ]; then
 LKBACK="$(grep "file=" $HOME/.config/nitrogen/bg-saved.cfg)"
 fi
 
+#conky
+LKCONK1="$(grep "conky" $HOME/.conky/conky-startup.sh | sed -n 2p)"
+LKCONK2="$(grep "conky" $HOME/.conky/conky-startup.sh | sed -n 3p)"
+CONKYSTATE="$(grep "Hidden" "$HOME/.config/autostart/conky.desktop")"
 
 #make temp file
-echo ""$LKTHEME" "$LKICON" "$LKTHEME2" "$LKICON2" "$LKFLUXSTYLE" "$TINTNUM" "$LKTINT1" "$LKTINT2" "$LKROFI" "$LKBACK"" > $MXLKPATH/tempdir/looktmp.txt
+echo ""$LKTHEME"|"$LKICON"|"$LKFONT"|"$LKTHEME2"|"$LKICON2"|"$LKFONT2"|"$LKFLUXSTYLE"|"$TINTNUM"|"$LKTINT1"|"$LKTINT2"|"$LKROFI"|"$LKBACK"|"$LKCONK1"|"$LKCONK2"|"$CONKYSTATE"" > $MXLKPATH/tempdir/looktmp.txt
 
 
 #amend temp
@@ -119,24 +132,36 @@ cd $MXLKPATH/tempdir
 
 sed -i "s/gtk-theme-name\=/ /g" looktmp.txt
 sed -i "s/gtk-icon-theme-name\=/ /g" looktmp.txt
+sed -i "s/gtk-font-name\=/ /g" looktmp.txt
 sed -i "s/session\.styleFile\:/ /g" looktmp.txt
 sed -i "s/\$HOME\/\.config\/tint2\// /g" looktmp.txt
-sed -i "s/\@import/ /g" looktmp.txt
+sed -i "s/\@import//g" looktmp.txt
 sed -i "s/file\=/ /g" looktmp.txt
-sed -i "s/\"/ /g" looktmp.txt
+sed -i "s/\"//g" looktmp.txt
+sed -i "s/cd //g" looktmp.txt
 
 
 #read temp
+
+OLDIFS="$IFS"
+IFS="|"
 
 read -r -a YADFILL < looktmp.txt
 
 LKTH="${YADFILL[0]}"
 LKIC="${YADFILL[1]}"
-LKFS="${YADFILL[4]}"
-LKTI1="${YADFILL[6]}"
-LKTI2="${YADFILL[7]}"
-LKRO="${YADFILL[8]}"
-LKBG="${YADFILL[9]}"
+LKFO="${YADFILL[2]}"
+LKFS="${YADFILL[6]}"
+LKTI1="${YADFILL[8]}"
+LKTI2="${YADFILL[9]}"
+LKRO="${YADFILL[10]}"
+LKBG="${YADFILL[11]}"
+LKCO1="${YADFILL[12]}"
+LKCO2="${YADFILL[13]}"
+LKCOST="${YADFILL[14]}"
+
+LKRO=$(echo "${LKRO}" | sed -e "s/ //g" )
+#LKCOST=$(echo "${LKCOST}" | sed -e "s/Hidden=//g" )
 
 
 #MAIN
@@ -145,10 +170,13 @@ MAIN=(yad --title="$TITLE" --class="$CLASS" --window-icon="$ICONPATH" --borders=
 --text="\n<b>Current Settings.\n</b>\n
 GTK Theme: <b>"$LKTH"</b>\n
 Gtk Icons: <b>"$LKIC"</b>\n
+Gtk Font: <b>"$LKFO"</b>\n
 Fluxbox Style: <b>"$LKFS"</b>\n
-Tint2 Panel: <b>"$LKTI1" "$LKTI2"</b>\n
+1st Tint2 Panel: <b>"$LKTI1"</b>\n
+2nd Tint2 Panel: <b>"$LKTI2"</b>\n
 Rofi: <b>"$LKRO"</b>\n
-Wallpaper: <b>"$LKBG"</b>\n"
+Wallpaper: <b>"$LKBG"</b>\n
+Conky: <b>"$LKCO1"</b>\n"
 --field="Save Look as" "New-Look-Name"\
 )
 NEWNAME=$("${MAIN[@]}")
@@ -163,6 +191,7 @@ if [ "$GETOUT" != 0 ]; then
 elif [ "$GETOUT" = 0 ]; then
 
 read NEWNAME < $MXLKPATH/tempdir/tempname.txt
+unset IFS
 
 fi
 
@@ -208,17 +237,33 @@ esac
 done
 
 ##################################
+#make look file
 
 echo ""$LKTHEME"
 "$LKICON"
+"$LKFONT"
 "$LKTHEME2"
 "$LKICON2"
+"$LKFONT2"
 session.styleFile: "$LKFS"
 "$TINTNUM"
 "$LKTINT1"
 "$LKTINT2"
 @import \""$LKRO"\"
-"$LKBACK"" > $MXLKPATH/looks/"$NEWNAME".look
+"$LKBACK"
+"$LKCONK1"
+"$LKCONK2"
+"$LKCOST"" > $MXLKPATH/looks/"$NEWNAME".look
+
+
+#make preview image
+
+scrot $MXLKPATH/looks/"$NEWNAME".png -b -o -t 25
+rm $MXLKPATH/looks/"$NEWNAME".png
+mv $MXLKPATH/looks/"$NEWNAME"-thumb.png $MXLKPATH/looks/"$NEWNAME".png
+
+
+#all done
 
   yad --title="$TITLE" --class="$CLASS" --window-icon="$ICONPATH" --width=400 --height=250 --fixed --center --borders=20 --text="All done!\n\nLook has been saved as <b>$NEWNAME</b>" --text-align=center --button="OK" \
 
@@ -264,21 +309,29 @@ mapfile LKRE < $LOOKRESTORE
 
 LKTHEMENEW="${LKRE[0]}"
 LKICONNEW="${LKRE[1]}"
-LKTHEMENEW2="${LKRE[2]}"
-LKICONNEW2="${LKRE[3]}"
-LKFSNEW="${LKRE[4]}"
-TINTNUMNEW="${LKRE[5]}"
-LKTINT1NEW="${LKRE[6]}"
-LKTINT2NEW="${LKRE[7]}"
-LKROFINEW="${LKRE[8]}"
-LKBACKNEW="${LKRE[9]}"
+LKFONTNEW="${LKRE[2]}"
+LKTHEMENEW2="${LKRE[3]}"
+LKICONNEW2="${LKRE[4]}"
+LKFONTNEW2="${LKRE[5]}"
+LKFSNEW="${LKRE[6]}"
+TINTNUMNEW="${LKRE[7]}"
+LKTINT1NEW="${LKRE[8]}"
+LKTINT2NEW="${LKRE[9]}"
+LKROFINEW="${LKRE[10]}"
+LKBACKNEW="${LKRE[11]}"
+LKCONK1NEW="${LKRE[12]}"
+LKCONK2NEW="${LKRE[13]}"
+LKCOSTNEW="${LKRE[14]}"
 
-LKTHEMENEW=$(echo "${LKTHEMENEW}" | sed -e 's/[]$.*[\^]/\\&/g' )
-LKICONNEW=$(echo "${LKICONNEW}" | sed -e 's/[]$.*[\^]/\\&/g' )
-LKTHEMENEW2=$(echo "${LKTHEMENEW2}" | sed -e 's/[]$.*[\^]/\\&/g' )
-LKICONNEW2=$(echo "${LKICONNEW2}" | sed -e 's/[]$.*[\^]/\\&/g' )
+LKTHEMENEW=$(echo "${LKTHEMENEW}" | sed -e 's/[]$ .*[\^]/\\&/g' )
+LKICONNEW=$(echo "${LKICONNEW}" | sed -e 's/[]$ .*[\^]/\\&/g' )
+LKFONTNEW=$(echo "${LKFONTNEW}" | sed -e 's/[]$ .*[\^]/\\&/g' )
+LKTHEMENEW2=$(echo "${LKTHEMENEW2}" | sed -e 's/[]$ .*[\^]/\\&/g' )
+LKICONNEW2=$(echo "${LKICONNEW2}" | sed -e 's/[]$ .*[\^]/\\&/g' )
+LKFONTNEW2=$(echo "${LKFONTNEW2}" | sed -e 's/[]$ .*[\^]/\\&/g' )
 LKFSNEW=$(echo "${LKFSNEW}" | sed -e 's/[]$\/*[\^]/\\&/g' )
-#LKTINTNEW=$(echo "${LKTINTNEW}" | sed -e 's/[]$\/*[\^]/\\&/g' )
+LKTINT1NEW=$(echo "${LKTINT1NEW}" | sed -e 's/$HOME/\$HOME/g' )
+LKTINT2NEW=$(echo "${LKTINT2NEW}" | sed -e 's/$HOME/\$HOME/g' )
 LKROFINEW=$(echo "${LKROFINEW}" | sed -e 's/[]$\/*[\^]/\\&/g' )
 LKBACKNEW=$(echo "${LKBACKNEW}" | sed -e 's/[]$\/*[\^]/\\&/g' )
 
@@ -287,8 +340,10 @@ LKBACKNEW=$(echo "${LKBACKNEW}" | sed -e 's/[]$\/*[\^]/\\&/g' )
 #theme and icons
 LKTHEMEOLD="$(grep "gtk-theme-name" $HOME/.config/gtk-3.0/settings.ini)"
 LKICONOLD="$(grep "gtk-icon-theme-name" $HOME/.config/gtk-3.0/settings.ini)"
+LKFONTOLD="$(grep "gtk-font-name" $HOME/.config/gtk-3.0/settings.ini)"
 LKTHEMEOLD2="$(grep "gtk-theme-name" $HOME/.gtkrc-2.0)"
 LKICONOLD2="$(grep "gtk-icon-theme-name" $HOME/.gtkrc-2.0)"
+LKFONTOLD2="$(grep "gtk-font-name" $HOME/.gtkrc-2.0)"
 
 #fluxbox style
 LKFSOLD="$(grep "styles" $HOME/.fluxbox/init)"
@@ -303,59 +358,90 @@ LKROFIOLD="$(grep "themes" $HOME/.config/rofi/config.rasi)"
 #background
 LKBACKOLD="$(grep "file=" $HOME/.config/nitrogen/bg-saved.cfg)"
 
-LKTHEMEOLD=$(echo "${LKTHEMEOLD}" | sed -e 's/[]$.*[\^]/\\&/g' )
-LKICONOLD=$(echo "${LKICONOLD}" | sed -e 's/[]$.*[\^]/\\&/g' )
-LKTHEMEOLD2=$(echo "${LKTHEMEOLD2}" | sed -e 's/[]$.*[\^]/\\&/g' )
-LKICONOLD2=$(echo "${LKICONOLD2}" | sed -e 's/[]$.*[\^]/\\&/g' )
+LKTHEMEOLD=$(echo "${LKTHEMEOLD}" | sed -e 's/[]$ .*[\^]/\\&/g' )
+LKICONOLD=$(echo "${LKICONOLD}" | sed -e 's/[]$ .*[\^]/\\&/g' )
+LKFONTOLD=$(echo "${LKFONTOLD}" | sed -e 's/[]$ .*[\^]/\\&/g' )
+LKTHEMEOLD2=$(echo "${LKTHEMEOLD2}" | sed -e 's/[]$ .*[\^]/\\&/g' )
+LKICONOLD2=$(echo "${LKICONOLD2}" | sed -e 's/[]$ .*[\^]/\\&/g' )
+LKFONTOLD2=$(echo "${LKFONTOLD2}" | sed -e 's/[]$ .*[\^]/\\&/g' )
 LKFSOLD=$(echo "${LKFSOLD}" | sed -e 's/[]$\/*[\^]/\\&/g' )
 #LKTINTOLD=$(echo "${LKTINTOLD}" | sed -e 's/[]$\/*[\^]/\\&/g' )
 LKROFIOLD=$(echo "${LKROFIOLD}" | sed -e 's/[]$\/*[\^]/\\&/g' )
 LKBACKOLD=$(echo "${LKBACKOLD}" | sed -e 's/[]$\/*[\^]/\\&/g' )
 
+#conky
+LKCOSTOLD="$(grep "Hidden" "$HOME/.config/autostart/conky.desktop")"
+
 
 #make temp file
-echo ""$LKTHEMENEW" "$LKICONNEW" "$LKTHEMENEW2" "$LKICONNEW2" "$LKFSNEW" "$TINTNUMNEW" "$LKTINT1NEW" "$LKTINT2NEW" "$LKROFINEW" "$LKBACKNEW"" > $MXLKPATH/tempdir/looktmp-new.txt
+echo ""$LKTHEMENEW"|"$LKICONNEW"|"$LKFONTNEW"|"$LKTHEMENEW2"|"$LKICONNEW2"|"$LKFONTNEW2"|"$LKFSNEW"|"$TINTNUMNEW"|"$LKTINT1NEW"|"$LKTINT2NEW"|"$LKROFINEW"|"$LKBACKNEW"|"$LKCONK1NEW"|"$LKCONK2NEW"|"$LKCOSTNEW"" > $MXLKPATH/tempdir/looktmp-new.txt
 
 #amend temp
 cd $MXLKPATH/tempdir
 
 sed -i "s/gtk-theme-name\=/ /g" looktmp-new.txt
 sed -i "s/gtk-icon-theme-name\=/ /g" looktmp-new.txt
+sed -i "s/gtk-font-name\=/ /g" looktmp-new.txt
 sed -i "s/session\.styleFile\:/ /g" looktmp-new.txt
 sed -i "s/\$HOME\/\.config\/tint2\// /g" looktmp-new.txt
 sed -i "s/\@import/ /g" looktmp-new.txt
 sed -i "s/file\=/ /g" looktmp-new.txt
 sed -i "s/\"/ /g" looktmp-new.txt
-
+sed -i "s/cd //g" looktmp-new.txt
+#sed -i "s/hidden=//g" looktmp-new.txt
 
 #read temp
+
+OLDIFS="$IFS"
+IFS="|"
 
 read -r -a NEWFILL < looktmp-new.txt
 
 NLKTH="${NEWFILL[0]}"
 NLKIC="${NEWFILL[1]}"
-NLKFS="${NEWFILL[4]}"
-NTINU="${NEWFILL[5]}"
-NLKTI1="${NEWFILL[6]}"
-NLKTI2="${NEWFILL[7]}"
-NLKRO="${NEWFILL[8]}"
-NLKBG="${NEWFILL[9]}"
+NLKFO="${NEWFILL[2]}"
+NLKFS="${NEWFILL[6]}"
+NTINU="${NEWFILL[7]}"
+NLKTI1="${NEWFILL[8]}"
+NLKTI2="${NEWFILL[9]}"
+NLKRO="${NEWFILL[10]}"
+NLKBG="${NEWFILL[11]}"
+NLKCO1="${NEWFILL[12]}"
+NLKCO2="${NEWFILL[13]}"
+NLKCOST="${NEWFILL[14]}"
 
-if [ $NLKTI2 = x ]; then
-NLKTI2=""
+
+#fix conky state
+if [ $NLKCOST != LKCOSTOLD ]; then
+sed -i "s/$LKCOSTOLD/$NLKCOST/g" $HOME/.config/autostart/conky.desktop
 fi
+
+NLKCOST=$(echo "${NLKCOST}" | sed -e "s/Hidden=//g" )
+
+if [ $NLKCOST = "false" ]; then
+COST="toggled on"
+else
+COST="toggled off"
+fi
+
+PREVIEW="$MXLKPATH/looks/$LOOKRESTORE"
+PREVIEW=$(echo "${PREVIEW}" | sed -e "s/\.look/\.png/g" )
 
 #RESTOREMAIN
 
-yad --title="$TITLE" --class="$CLASS" --window-icon="$ICONPATH" --borders=20 --center --width=600 --height=400 --fixed --button="gtk-quit":1 --button="Restore Look":0 \
---text="\n<b>These settings will be restored.\n</b>\n
+yad --title="$TITLE" --class="$CLASS" --window-icon="$ICONPATH" --borders=20 --center --width=900 --height=400 --fixed --image="$PREVIEW" --button="gtk-quit":1 --button="Restore Look":0 \
+--text="<b>These settings will be restored.\n</b>
 GTK Theme: <b>"$NLKTH"</b>\n
 Gtk Icons: <b>"$NLKIC"</b>\n
+Gtk Font: <b>"$NLKFO"</b>\n
 Fluxbox Style: <b>"$NLKFS"</b>\n
-Tint2: <b>"$NLKTI1" "$NLKTI2"</b>\n
+1st Tint2 Panel: <b>"$NLKTI1"</b>\n
+2nd Tint2 Panel: <b>"$NLKTI2"</b>\n
 Rofi: <b>"$NLKRO"</b>\n
-Wallpaper: <b>"$NLKBG"</b>\n"\
-
+Wallpaper: <b>"$NLKBG"</b>\n
+Conky: <b>"$NLKCO1"</b>\n
+Conky State: <b>"$COST"</b>\n
+(Wait 10 seconds for the conky to restart)"\
 
 GETOUT=$(echo "$?")
 
@@ -365,17 +451,20 @@ if [ "$GETOUT" != 0 ]; then
 
 elif [ "$GETOUT" = 0 ]; then
 
+unset IFS
+
 #Edit Config files
 
 #gtk
 cd ~/.config/gtk-3.0
 sed -i -e "s/${LKTHEMEOLD}/${LKTHEMENEW}/g" settings.ini
 sed -i -e "s/${LKICONOLD}/${LKICONNEW}/g" settings.ini
+sed -i -e "s/${LKFONTOLD}/${LKFONTNEW}/g" settings.ini
 
 cd ~
 sed -i -e "s/${LKTHEMEOLD2}/${LKTHEMENEW2}/g" .gtkrc-2.0
 sed -i -e "s/${LKICONOLD2}/${LKICONNEW2}/g" .gtkrc-2.0
-
+sed -i -e "s/${LKFONTOLD2}/${LKFONTNEW2}/g" .gtkrc-2.0
 
 #gtk bash
 function reload_gtk_theme() {
@@ -402,18 +491,28 @@ rm tint2-sessionfile
 killall tint2
 LKTINTNEWA=$(basename "$LKTINT1NEW")
 LKTINTNEWB=$(basename "$LKTINT2NEW")
-printf "$HOME/.config/tint2/$LKTINTNEWA\n$HOME/.config/tint2/$LKTINTNEWB" >> ~/.config/tint2/tint2-sessionfile
-
+echo "$LKTINT1NEW
+$LKTINT2NEW" >> ~/.config/tint2/tint2-sessionfile
 tint2 -c $HOME/.config/tint2/$LKTINTNEWA >/dev/null 2>&1 &  disown
 tint2 -c $HOME/.config/tint2/$LKTINTNEWB >/dev/null 2>&1 &  disown
 
-else
+fi
+
+if  [ $TINTNUMNEW = 1 ]; then
 
 rm tint2-sessionfile
 killall tint2
 LKTINTNEWA=$(basename "$LKTINT1NEW")
 echo "$HOME/.config/tint2/$LKTINTNEWA" >> ~/.config/tint2/tint2-sessionfile
 tint2 -c $HOME/.config/tint2/$LKTINTNEWA >/dev/null 2>&1 &  disown
+
+fi
+
+if  [ $TINTNUMNEW = 0 ]; then
+
+rm tint2-sessionfile
+killall tint2
+echo "" >> ~/.config/tint2/tint2-sessionfile
 
 fi
 
@@ -431,10 +530,34 @@ sed -i "s/file\=//g" nitrotemp.txt
 read LKNITRO < nitrotemp.txt
 nitrogen --set-zoom-fill --save "$LKNITRO"
 
+#conky
+cd ~/.conky
+
+if [ $NLKCOST = "false" ]; then
+printf "#!/bin/sh
+if [ x\"\${DESKTOP_SESSION##*/}\" = x\"lightdm-xsession\" ]; then
+sleep 10s
+killall conky
+$LKCONK1NEW
+$LKCONK2NEW
+exit 0
+fi" > conky-startup.sh
+
+echo | sh conky-startup.sh
+#sh conky-startup.sh
+
+else
+
+killall conky
+
 fi
+
+fi
+
+exit
 
 }
 
 export -f save_look restore_look
 
-yad --title="$TITLE" --class="$CLASS" --window-icon="$ICONPATH" --width=400 --height=200 --fixed --center --borders=20 --text-align=center --text="<b>You can save the current look or restore a saved look</b>\n\nA look is comprised of the following elements\n- Gtk-Theme\n- Gtk-Icon\n- Fluxbox Style\n- Tint2 Panel\n- Rofi Theme\n- Wallpaper\n\n" --button="gtk-close" --button="Restore Look":"bash -c restore_look" --button="Save Current Look":"bash -c save_look" \
+yad --title="$TITLE" --class="$CLASS" --window-icon="$ICONPATH" --width=400 --height=200 --fixed --center --borders=20 --text-align=center --text="<b>You can save the current look or restore a saved look</b>\n\nA look is comprised of the following elements\n- Gtk-Theme\n- Gtk-Icon\n- Fluxbox Style\n- up to two Tint2 Panels\n- Rofi Theme\n- Wallpaper\n- One Conky\n\n" --button="gtk-close" --button="Restore Look":"bash -c restore_look" --button="Save Current Look":"bash -c save_look" \
