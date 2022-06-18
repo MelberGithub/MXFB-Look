@@ -6,6 +6,7 @@ This is not a fully tested script. **Use at your own risk!** I suggest creating 
 A look is comprised of the following elements
 - gtk theme
 - gtk icon theme
+- gtk font
 - fluxbox style
 - tint2 panel (max. two)
 - rofi
