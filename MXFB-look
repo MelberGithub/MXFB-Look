@@ -1,6 +1,6 @@
 #!/bin/bash
 #Look Library is an app to save and restore the look of MX-Linux Fluxbox
-#V.0.0.5 font-conky by Melber 18 June 2022
+#V.0.0.6 font-conky by Melber 26 June 2022
 #License: GPL-3.0+
 #mxcr-icon based on yad icon from papirus icon set
 #Changelog
@@ -9,11 +9,10 @@
 
 #define some variables
 
-TITLE="MXFB-Look-Library"
+TITLE="MXFB-Look"
 CLASS="mxfblook"
 MXLKPATH="$HOME/.config/mxfb-look"
 ICONPATH="/usr/share/pixmaps/mxcr-icon.png"
-#HELPPATH="/usr/share/pixmaps/mxrr-help.png"
 
 
 #delete stylelist and tempclr after use
@@ -53,9 +52,9 @@ fi
 
 #make Test look file
 
-if [ ! -f $MXLKPATH/looks/test.look ]; then
+if [ ! -f $MXLKPATH/looks/test1.look ]; then
 
-printf "gtk-theme-name=Numix\ngtk-icon-theme-name=Numix\ngtk-font-name=Caladea 11\ngtk-theme-name=\"Numix\"\ngtk-icon-theme-name=\"Numix\"\ngtk-font-name=\"Caladea 11\"\nsession.styleFile: /usr/share/fluxbox/styles/debian-blue\n1\n\$HOME/.config/tint2/grayblue-tint2rc\nNone\n@import \"/usr/share/rofi/themes/Indego.rasi\"\nfile=/usr/share/backgrounds/MX_KXF_Blues.jpg\ncd \"/home/\$USER/.conky/MX-antiX\"\nconky -c \"/home/\$USER/.conky/MX-antiX/MX-antiX17\" &\nHidden=false" > $MXLKPATH/looks/test.look
+printf "gtk-theme-name=Numix\ngtk-icon-theme-name=Numix\ngtk-font-name=Caladea 11\ngtk-theme-name=\"Numix\"\ngtk-icon-theme-name=\"Numix\"\ngtk-font-name=\"Caladea 11\"\nsession.styleFile: /usr/share/fluxbox/styles/debian-blue\n1\n\$HOME/.config/tint2/grayblue-tint2rc\nNone\n@import \"/usr/share/rofi/themes/Indego.rasi\"\nfile=/usr/share/backgrounds/MX_KXF_Blues.jpg\ncd \"/home/\$USER/.conky/MX-antiX\"\nconky -c \"/home/\$USER/.conky/MX-antiX/MX-antiX17\" &\nHidden=false" > $MXLKPATH/looks/test1.look
 
 fi
 
@@ -74,7 +73,7 @@ fi
 save_look() {
 #define some variables
 
-TITLE="MXFB-Look-Library"
+TITLE="MXFB-Look"
 CLASS="mxfblook"
 MXLKPATH="$HOME/.config/mxfb-look"
 ICONPATH="/usr/share/pixmaps/mxcr-icon.png"
@@ -161,7 +160,18 @@ LKCO2="${YADFILL[13]}"
 LKCOST="${YADFILL[14]}"
 
 LKRO=$(echo "${LKRO}" | sed -e "s/ //g" )
-#LKCOST=$(echo "${LKCOST}" | sed -e "s/Hidden=//g" )
+LKCOSTSV=$(echo "${LKCOST}" | sed -e "s/Hidden=//g" )
+
+
+if [ $LKCO1 =  ]; then
+LKCO1="None"
+fi
+
+if [ $LKCOSTSV = "false" ]; then
+LKCOSTSV="toggled on"
+else
+LKCOSTSV="toggled off"
+fi
 
 
 #MAIN
@@ -176,7 +186,8 @@ Fluxbox Style: <b>"$LKFS"</b>\n
 2nd Tint2 Panel: <b>"$LKTI2"</b>\n
 Rofi: <b>"$LKRO"</b>\n
 Wallpaper: <b>"$LKBG"</b>\n
-Conky: <b>"$LKCO1"</b>\n"
+Conky: <b>"$LKCO1"</b>\n
+Conky State: <b>"$LKCOSTSV"</b>\n"
 --field="Save Look as" "New-Look-Name"\
 )
 NEWNAME=$("${MAIN[@]}")
@@ -258,9 +269,26 @@ session.styleFile: "$LKFS"
 
 #make preview image
 
-scrot $MXLKPATH/looks/"$NEWNAME".png -b -o -t 25
+WINLIST=$(wmctrl -l | grep -v tint2 | grep -v conky | awk '{ print$1 }')
+
+for i in $WINLIST;
+do
+WINNUM=$i
+wmctrl -i -r "$i" -b add,hidden
+done
+
+sleep 0.5
+scrot $MXLKPATH/looks/"$NEWNAME".png -b -o -t 20
 rm $MXLKPATH/looks/"$NEWNAME".png
 mv $MXLKPATH/looks/"$NEWNAME"-thumb.png $MXLKPATH/looks/"$NEWNAME".png
+sleep 0.5
+
+
+for i in $WINLIST;
+do
+WINNUM=$i
+wmctrl -i -r "$i" -b toggle,hidden
+done
 
 
 #all done
@@ -278,7 +306,7 @@ exit
 restore_look() {
 #define some variables
 
-TITLE="MXFB-Look-Library"
+TITLE="MXFB-Look"
 CLASS="mxfblook"
 MXLKPATH="$HOME/.config/mxfb-look"
 ICONPATH="/usr/share/pixmaps/mxcr-icon.png"
@@ -412,6 +440,11 @@ NLKCOST="${NEWFILL[14]}"
 
 
 #fix conky state
+
+if [ $NLKCO1 = " " ]; then
+NLKCO1="None"
+fi
+
 if [ $NLKCOST != LKCOSTOLD ]; then
 sed -i "s/$LKCOSTOLD/$NLKCOST/g" $HOME/.config/autostart/conky.desktop
 fi
@@ -430,18 +463,18 @@ PREVIEW=$(echo "${PREVIEW}" | sed -e "s/\.look/\.png/g" )
 #RESTOREMAIN
 
 yad --title="$TITLE" --class="$CLASS" --window-icon="$ICONPATH" --borders=20 --center --width=900 --height=400 --fixed --image="$PREVIEW" --button="gtk-quit":1 --button="Restore Look":0 \
---text="<b>These settings will be restored.\n</b>
-GTK Theme: <b>"$NLKTH"</b>\n
-Gtk Icons: <b>"$NLKIC"</b>\n
-Gtk Font: <b>"$NLKFO"</b>\n
-Fluxbox Style: <b>"$NLKFS"</b>\n
-1st Tint2 Panel: <b>"$NLKTI1"</b>\n
-2nd Tint2 Panel: <b>"$NLKTI2"</b>\n
-Rofi: <b>"$NLKRO"</b>\n
-Wallpaper: <b>"$NLKBG"</b>\n
-Conky: <b>"$NLKCO1"</b>\n
-Conky State: <b>"$COST"</b>\n
-(Wait 10 seconds for the conky to restart)"\
+--text="<b>   "$LOOKRESTORE"</b>\n
+   GTK Theme: <b>"$NLKTH"</b>\n
+   Gtk Icons: <b>"$NLKIC"</b>\n
+   Gtk Font: <b>"$NLKFO"</b>\n
+   Fluxbox Style: <b>"$NLKFS"</b>\n
+   1st Tint2 Panel: <b>"$NLKTI1"</b>\n
+   2nd Tint2 Panel: <b>"$NLKTI2"</b>\n
+   Rofi: <b>"$NLKRO"</b>\n
+   Wallpaper: <b>"$NLKBG"</b>\n
+   Conky: <b>"$NLKCO1"</b>\n
+   Conky State: <b>"$COST"</b>\n
+   (Wait 10 seconds for the conky to restart)\n"\
 
 GETOUT=$(echo "$?")
 
@@ -545,6 +578,7 @@ fi" > conky-startup.sh
 
 echo | sh conky-startup.sh
 #sh conky-startup.sh
+exit
 
 else
 
