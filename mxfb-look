@@ -163,7 +163,7 @@ LKRO=$(echo "${LKRO}" | sed -e "s/ //g" )
 LKCOSTSV=$(echo "${LKCOST}" | sed -e "s/Hidden=//g" )
 
 
-if [ $LKCO1 =  ]; then
+if [ -z "$LKCO1" ]; then
 LKCO1="None"
 fi
 
@@ -566,7 +566,6 @@ nitrogen --set-zoom-fill --save "$LKNITRO"
 #conky
 cd ~/.conky
 
-if [ $NLKCOST = "false" ]; then
 printf "#!/bin/sh
 if [ x\"\${DESKTOP_SESSION##*/}\" = x\"lightdm-xsession\" ]; then
 sleep 10s
@@ -576,8 +575,8 @@ $LKCONK2NEW
 exit 0
 fi" > conky-startup.sh
 
+if [ $NLKCOST = "false" ]; then
 echo | sh conky-startup.sh
-#sh conky-startup.sh
 exit
 
 else
