@@ -1,11 +1,11 @@
 #!/bin/bash
-#Look Library is an app to save and restore the look of MX-Linux Fluxbox
-#V.0.0.6 font-conky by Melber 26 June 2022
+#MXFB-Look is an app to save and restore the look of MX-Linux Fluxbox
+#V.0.7 by Melber 29 June 2022
 #License: GPL-3.0+
 #mxcr-icon based on yad icon from papirus icon set
 #Changelog
-#added font, conky, preview image
-#fixed accept empty space in gtk names
+#added TEXTDOMAINDIR
+#fixed no selection for restore look
 
 #define some variables
 
@@ -13,6 +13,8 @@ TITLE="MXFB-Look"
 CLASS="mxfblook"
 MXLKPATH="$HOME/.config/mxfb-look"
 ICONPATH="/usr/share/pixmaps/mxcr-icon.png"
+TEXTDOMAINDIR=/usr/share/locale 
+export TEXTDOMAIN="mxfb-look"
 
 
 #delete stylelist and tempclr after use
@@ -77,6 +79,8 @@ TITLE="MXFB-Look"
 CLASS="mxfblook"
 MXLKPATH="$HOME/.config/mxfb-look"
 ICONPATH="/usr/share/pixmaps/mxcr-icon.png"
+TEXTDOMAINDIR=/usr/share/locale 
+export TEXTDOMAIN="mxfb-look"
 
 #read current look components
 
@@ -310,6 +314,8 @@ TITLE="MXFB-Look"
 CLASS="mxfblook"
 MXLKPATH="$HOME/.config/mxfb-look"
 ICONPATH="/usr/share/pixmaps/mxcr-icon.png"
+TEXTDOMAINDIR=/usr/share/locale 
+export TEXTDOMAIN="mxfb-look"
 
 
 #read saved looks
@@ -318,6 +324,8 @@ ls -f *.look > $MXLKPATH/tempdir/looklist.txt
 
 
 #select look to restore
+
+while [ -z "$LOOKRESTORE" ]; do
 
 LOOKRESTORE=$( yad --title="$TITLE" --class="$CLASS" --window-icon="$ICONPATH" --text="\n<b> Choose which look to restore</b>\n" --center --width=400 --height=300 --center --list --no-headers --column=Style --separator="" < $MXLKPATH/tempdir/looklist.txt )
 
@@ -328,6 +336,14 @@ if [ "$GETOUT" != 0 ]; then
   exit
 
 fi
+
+if [ -z "$LOOKRESTORE" ]; then
+
+  yad --title="$TITLE" --class="$CLASS" --window-icon="$ICONPATH" --text="\n<b> You need to select a look !</b>\n" --center  --width=400 --height=300 
+
+fi
+
+done
 
 #read Settings for new look
 
@@ -462,7 +478,7 @@ PREVIEW=$(echo "${PREVIEW}" | sed -e "s/\.look/\.png/g" )
 
 #RESTOREMAIN
 
-yad --title="$TITLE" --class="$CLASS" --window-icon="$ICONPATH" --borders=20 --center --width=900 --height=400 --fixed --image="$PREVIEW" --button="gtk-quit":1 --button="Restore Look":0 \
+yad --title="$TITLE" --class="$CLASS" --window-icon="$ICONPATH" --borders=20 --center --width=600 --height=400 --fixed --image="$PREVIEW" --button="gtk-quit":1 --button="Restore Look":0 \
 --text="<b>   "$LOOKRESTORE"</b>\n
    GTK Theme: <b>"$NLKTH"</b>\n
    Gtk Icons: <b>"$NLKIC"</b>\n
@@ -576,6 +592,7 @@ exit 0
 fi" > conky-startup.sh
 
 if [ $NLKCOST = "false" ]; then
+
 echo | sh conky-startup.sh
 exit
 
@@ -593,4 +610,4 @@ exit
 
 export -f save_look restore_look
 
-yad --title="$TITLE" --class="$CLASS" --window-icon="$ICONPATH" --width=400 --height=200 --fixed --center --borders=20 --text-align=center --text="<b>You can save the current look or restore a saved look</b>\n\nA look is comprised of the following elements\n- Gtk-Theme\n- Gtk-Icon\n- Fluxbox Style\n- up to two Tint2 Panels\n- Rofi Theme\n- Wallpaper\n- One Conky\n\n" --button="gtk-close" --button="Restore Look":"bash -c restore_look" --button="Save Current Look":"bash -c save_look" \
+yad --title="$TITLE" --class="$CLASS" --window-icon="$ICONPATH" --width=400 --height=200 --fixed --center --borders=20 --text-align=center --text="<b>You can save the current look or restore a saved look</b>\n\nA look is comprised of the following elements\n- Gtk-Theme\n- Gtk-Icon\n- Gtk-Font\n- Fluxbox Style\n- up to two Tint2 Panels\n- Rofi Theme\n- Wallpaper\n- One Conky\n\n" --button="gtk-close" --button="Restore Look":"bash -c restore_look" --button="Save Current Look":"bash -c save_look" \
