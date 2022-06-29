@@ -1,11 +1,11 @@
 #!/bin/bash
 #MXFB-Look is an app to save and restore the look of MX-Linux Fluxbox
-#V.0.7 by Melber 29 June 2022
+#V.0.7 by Melber 30 June 2022
 #License: GPL-3.0+
 #mxcr-icon based on yad icon from papirus icon set
 #Changelog
-#added TEXTDOMAINDIR
-#fixed no selection for restore look
+#added- check nitrogen or feh in fb-startup, enable setting wallpaper with feh
+#fixed- empty selection for restore look
 
 #define some variables
 
@@ -13,8 +13,6 @@ TITLE="MXFB-Look"
 CLASS="mxfblook"
 MXLKPATH="$HOME/.config/mxfb-look"
 ICONPATH="/usr/share/pixmaps/mxcr-icon.png"
-TEXTDOMAINDIR=/usr/share/locale 
-export TEXTDOMAIN="mxfb-look"
 
 
 #delete stylelist and tempclr after use
@@ -79,8 +77,7 @@ TITLE="MXFB-Look"
 CLASS="mxfblook"
 MXLKPATH="$HOME/.config/mxfb-look"
 ICONPATH="/usr/share/pixmaps/mxcr-icon.png"
-TEXTDOMAINDIR=/usr/share/locale 
-export TEXTDOMAIN="mxfb-look"
+
 
 #read current look components
 
@@ -115,11 +112,24 @@ fi
 LKROFI="$(grep "themes" $HOME/.config/rofi/config.rasi)"
 
 #background
+CHECKFEH=$(grep '#nitrogen' $HOME/.fluxbox/startup)
+
+if [ -z "$CHECKFEH" ]; then
+
 LKBACK="$(grep "file=" $HOME/.config/nitrogen/bg-saved.cfg | sed -n 2p)"
+
+else
+
+LKBACK=$(awk '/jpg/ {print $NF}' $HOME/.fehbg)
+LKBACK=$(echo "${LKBACK}" | sed -e "s/'//g")
+LKBACK="file="$LKBACK""
+
+fi
 
 if [ "$LKBACK" = "" ]; then
 LKBACK="$(grep "file=" $HOME/.config/nitrogen/bg-saved.cfg)"
 fi
+
 
 #conky
 LKCONK1="$(grep "conky" $HOME/.conky/conky-startup.sh | sed -n 2p)"
@@ -314,8 +324,6 @@ TITLE="MXFB-Look"
 CLASS="mxfblook"
 MXLKPATH="$HOME/.config/mxfb-look"
 ICONPATH="/usr/share/pixmaps/mxcr-icon.png"
-TEXTDOMAINDIR=/usr/share/locale 
-export TEXTDOMAIN="mxfb-look"
 
 
 #read saved looks
@@ -429,7 +437,7 @@ sed -i "s/gtk-font-name\=/ /g" looktmp-new.txt
 sed -i "s/session\.styleFile\:/ /g" looktmp-new.txt
 sed -i "s/\$HOME\/\.config\/tint2\// /g" looktmp-new.txt
 sed -i "s/\@import/ /g" looktmp-new.txt
-sed -i "s/file\=/ /g" looktmp-new.txt
+sed -i "s/file\=//g" looktmp-new.txt
 sed -i "s/\"/ /g" looktmp-new.txt
 sed -i "s/cd //g" looktmp-new.txt
 #sed -i "s/hidden=//g" looktmp-new.txt
@@ -571,6 +579,11 @@ cd $HOME/.config/rofi/
 sed -i -e "s/${LKROFIOLD}/${LKROFINEW}/g" config.rasi
 
 #background
+
+CHECKFEH=$(grep '#nitrogen' $HOME/.fluxbox/startup)
+
+if [ -z "$CHECKFEH" ]; then
+
 cd $HOME/.config/nitrogen
 sed -i -e "s/${LKBACKOLD}/${LKBACKNEW}/g" bg-saved.cfg
 cd $MXLKPATH/tempdir
@@ -578,6 +591,14 @@ echo "$LKBACKNEW" > nitrotemp.txt
 sed -i "s/file\=//g" nitrotemp.txt
 read LKNITRO < nitrotemp.txt
 nitrogen --set-zoom-fill --save "$LKNITRO"
+
+else
+
+NLKBG=$(echo "${NLKBG}" | sed -e 's/\\//g')
+
+feh --bg-scale $NLKBG
+
+fi
 
 #conky
 cd ~/.conky
@@ -594,6 +615,7 @@ fi" > conky-startup.sh
 if [ $NLKCOST = "false" ]; then
 
 echo | sh conky-startup.sh
+exit
 exit
 
 else
