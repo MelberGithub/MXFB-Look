@@ -5,7 +5,7 @@
 #mxcr-icon based on yad icon from papirus icon set
 #Changelog
 #added- check nitrogen or feh in fb-startup, enable setting wallpaper with feh
-#fixed- empty selection for restore look
+#fixed- disallow empty selection for restore look, conky toggle status display
 
 #define some variables
 
@@ -174,8 +174,7 @@ LKCO2="${YADFILL[13]}"
 LKCOST="${YADFILL[14]}"
 
 LKRO=$(echo "${LKRO}" | sed -e "s/ //g" )
-LKCOSTSV=$(echo "${LKCOST}" | sed -e "s/Hidden=//g" )
-
+LKCOSTSV=$(echo "${LKCOST}" | sed -e 's/Hidden=//g' | sed -e "s/\ //g" )
 
 if [ -z "$LKCO1" ]; then
 LKCO1="None"
@@ -473,7 +472,7 @@ if [ $NLKCOST != LKCOSTOLD ]; then
 sed -i "s/$LKCOSTOLD/$NLKCOST/g" $HOME/.config/autostart/conky.desktop
 fi
 
-NLKCOST=$(echo "${NLKCOST}" | sed -e "s/Hidden=//g" )
+NLKCOST=$(echo "${NLKCOST}" | sed -e 's/Hidden=//g' | sed -e "s/\ //g" )
 
 if [ $NLKCOST = "false" ]; then
 COST="toggled on"
