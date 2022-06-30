@@ -1,6 +1,6 @@
 #!/bin/bash
 #MXFB-Look is an app to save and restore the look of MX-Linux Fluxbox
-#V.0.7 by Melber 30 June 2022
+#V.0.7 by Melber ß1 July 2022
 #License: GPL-3.0+
 #mxcr-icon based on yad icon from papirus icon set
 #Changelog
@@ -120,13 +120,14 @@ LKBACK="$(grep "file=" $HOME/.config/nitrogen/bg-saved.cfg | sed -n 2p)"
 
 else
 
-LKBACK=$(awk '/jpg/ {print $NF}' $HOME/.fehbg)
-LKBACK=$(echo "${LKBACK}" | sed -e "s/'//g")
+LKBACK=$(grep "jpg" $HOME/.fehbg)
+LKBACK=$(echo "${LKBACK}" | sed -e "s/'/|/g")
+LKBACK=$(echo "$LKBACK"  | cut -d '|' -f 2)
 LKBACK="file="$LKBACK""
 
 fi
 
-if [ "$LKBACK" = "" ]; then
+if [ -z "$LKBACK" ]; then
 LKBACK="$(grep "file=" $HOME/.config/nitrogen/bg-saved.cfg)"
 fi
 
@@ -203,7 +204,7 @@ Conky: <b>"$LKCO1"</b>\n
 Conky State: <b>"$LKCOSTSV"</b>\n"
 --field="Save Look as" "New-Look-Name"\
 )
-NEWNAME=$("${MAIN[@]}")
+NEWNAME=$("${MAIN[@]}" | sed -e 's/ /-/' )
 (($?==0)) && echo "$NEWNAME" > $MXLKPATH/tempdir/tempname.txt
 
 GETOUT=$(echo "$?")
@@ -595,7 +596,7 @@ else
 
 NLKBG=$(echo "${NLKBG}" | sed -e 's/\\//g')
 
-feh --bg-scale $NLKBG
+feh --bg-scale "$NLKBG"
 
 fi
 
