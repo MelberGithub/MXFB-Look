@@ -1,6 +1,6 @@
 #!/bin/bash
 #MXFB-Look is an app to save and restore the look of MX-Linux Fluxbox
-#V.0.7.test by Melber 01 July 2022
+#V.0.7.test2 by Melber 01 July 2022
 #License: GPL-3.0+
 #mxcr-icon based on yad icon from papirus icon set
 #Changelog
@@ -118,18 +118,20 @@ if [ -z "$CHECKFEH" ]; then
 
 LKBACK="$(grep "file=" $HOME/.config/nitrogen/bg-saved.cfg | sed -n 2p)"
 
+if [ -z "$LKBACK" ]; then
+LKBACK="$(grep "file=" $HOME/.config/nitrogen/bg-saved.cfg)"
+fi
+
 else
 
-LKBACK=$(grep "jpg" $HOME/.fehbg)
+LKBACK=$(grep "feh" $HOME/.fehbg)
 LKBACK=$(echo "${LKBACK}" | sed -e "s/'/|/g")
 LKBACK=$(echo "$LKBACK"  | cut -d '|' -f 2)
 LKBACK="file="$LKBACK""
 
 fi
 
-if [ -z "$LKBACK" ]; then
-LKBACK="$(grep "file=" $HOME/.config/nitrogen/bg-saved.cfg)"
-fi
+
 
 
 #conky
@@ -204,7 +206,7 @@ Conky: <b>"$LKCO1"</b>\n
 Conky State: <b>"$LKCOSTSV"</b>\n"
 --field="Save Look as" "New-Look-Name"\
 )
-NEWNAME=$("${MAIN[@]}" | sed -e 's/ /-/' )
+NEWNAME=$("${MAIN[@]}" | sed -e 's/ /-/g' )
 (($?==0)) && echo "$NEWNAME" > $MXLKPATH/tempdir/tempname.txt
 
 GETOUT=$(echo "$?")
@@ -385,7 +387,7 @@ LKFSNEW=$(echo "${LKFSNEW}" | sed -e 's/[]$\/*[\^]/\\&/g' )
 LKTINT1NEW=$(echo "${LKTINT1NEW}" | sed -e 's/$HOME/\$HOME/g' )
 LKTINT2NEW=$(echo "${LKTINT2NEW}" | sed -e 's/$HOME/\$HOME/g' )
 LKROFINEW=$(echo "${LKROFINEW}" | sed -e 's/[]$\/*[\^]/\\&/g' )
-LKBACKNEW=$(echo "${LKBACKNEW}" | sed -e 's/[]$\/*[\^]/\\&/g' )
+LKBACKNEW=$(echo "${LKBACKNEW}" | sed -e 's/[]$ \/*[\^]/\\&/g' )
 
 #read current look components
 
@@ -408,7 +410,16 @@ LKTINT2OLD="$(grep "tint2" $HOME/.config/tint2/tint2-sessionfile | sed -n 2p)"
 LKROFIOLD="$(grep "themes" $HOME/.config/rofi/config.rasi)"
 
 #background
-LKBACKOLD="$(grep "file=" $HOME/.config/nitrogen/bg-saved.cfg)"
+CHECKFEH=$(grep '#nitrogen' $HOME/.fluxbox/startup)
+
+if [ -z "$CHECKFEH" ]; then
+
+LKBACKOLD="$(grep "file=" $HOME/.config/nitrogen/bg-saved.cfg | sed -n 2p)"
+
+    if [ -z "$LKBACKOLD" ]; then
+    LKBACKOLD="$(grep "file=" $HOME/.config/nitrogen/bg-saved.cfg)"
+    fi
+fi
 
 LKTHEMEOLD=$(echo "${LKTHEMEOLD}" | sed -e 's/[]$ .*[\^]/\\&/g' )
 LKICONOLD=$(echo "${LKICONOLD}" | sed -e 's/[]$ .*[\^]/\\&/g' )
@@ -580,7 +591,7 @@ sed -i -e "s/${LKROFIOLD}/${LKROFINEW}/g" config.rasi
 
 #background
 
-CHECKFEH=$(grep '#nitrogen' $HOME/.fluxbox/startup)
+#CHECKFEH=$(grep '#nitrogen' $HOME/.fluxbox/startup)
 
 if [ -z "$CHECKFEH" ]; then
 
@@ -595,6 +606,8 @@ nitrogen --set-zoom-fill --save "$LKNITRO"
 else
 
 NLKBG=$(echo "${NLKBG}" | sed -e 's/\\//g')
+NLKBG=$(echo "${NLKBG}" | sed -e "s/'/|/g")
+NLKBG=$(echo "$NLKBG"  | cut -d '|' -f 2)
 
 feh --bg-scale "$NLKBG"
 
