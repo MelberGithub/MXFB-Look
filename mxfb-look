@@ -1,6 +1,6 @@
 #!/bin/bash
-#MXFB-Look is an app to save and restore the look of MX-Linux Fluxbox
-#V.0.7.test2 by Melber 01 July 2022
+#MXFB-Look is a tool to save and restore desktop setups in MX-Linux Fluxbox
+#V.0.7 by Melber 02 July 2022
 #License: GPL-3.0+
 #mxcr-icon based on yad icon from papirus icon set
 #Changelog
