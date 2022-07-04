@@ -1,6 +1,6 @@
 #!/bin/bash
 #MXFB-Look is a tool to save and restore desktop setups in MX-Linux Fluxbox
-#V.0.7 by Melber 02 July 2022
+#V.0.7.1 by Melber 04 July 2022
 #License: GPL-3.0+
 #mxcr-icon based on yad icon from papirus icon set
 #Changelog
@@ -206,7 +206,7 @@ Conky: <b>"$LKCO1"</b>\n
 Conky State: <b>"$LKCOSTSV"</b>\n"
 --field="Save Look as" "New-Look-Name"\
 )
-NEWNAME=$("${MAIN[@]}" | sed -e 's/ /-/g' )
+NEWNAME=$("${MAIN[@]}")
 (($?==0)) && echo "$NEWNAME" > $MXLKPATH/tempdir/tempname.txt
 
 GETOUT=$(echo "$?")
@@ -221,6 +221,8 @@ read NEWNAME < $MXLKPATH/tempdir/tempname.txt
 unset IFS
 
 fi
+
+NEWNAME=$(echo "$NEWNAME" | sed -e 's/ /-/g')
 
 
 #check new Look name is not empty and forbid MXFB-default overwrite
